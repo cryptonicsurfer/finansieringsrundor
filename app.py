@@ -142,6 +142,6 @@ with colB:
     """)
     
     discount_factor = 1/n_years
-    annualiserad_prc = ((likvid_exit/float_runda1) ** discount_factor - 1) *100
+    annualiserad_prc = ((likvid_exit/float_runda1) ** discount_factor - 1) *100 if float_runda1 != 0 else 0
     st.write(f'annualiserad avkastning är {annualiserad_prc:.2f}%')
 
