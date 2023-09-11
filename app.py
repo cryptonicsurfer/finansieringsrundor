@@ -107,7 +107,7 @@ st.write("---")
 colA, colB = st.columns(2)
 
 with colA:
-    st.header('***' * 15)
+    # st.header('***' * 15)
     float_post_money3 = float_pre_money3 + float_runda3
 
     capital_raised= float_runda1 + float_runda2 + float_runda3
@@ -132,7 +132,7 @@ with colA:
 
 
 with colB:
-    st.header('***' * 15)
+    # st.header('***' * 15)
     n_years = st.slider('välj tidshorisont', min_value=1, max_value=12, value=7)
     st.markdown(f"""
     Exitvärde: {float_exit}msek  
