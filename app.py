@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly_express as px
 
 st.set_page_config(layout="wide")
 
@@ -13,6 +14,10 @@ float_runda1 = 0
 float_runda2 = 0
 float_runda3 = 0
 float_exit = 0
+
+dilution_1st = 0
+dilution_2nd_round= 0
+dilution_final = 0
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -128,7 +133,18 @@ with colA:
 
     st.write(f'total utveckling {bolags_return_x:.2f}x')
 
-    st.write(f'total utveckling om man bara deltagit i runda 1: {first_round_investor_x:.2f}x, eller {first_round_investor_prc:.2f}%')  
+    st.write(f'total utveckling om man bara deltagit i runda 1: {first_round_investor_x:.2f}x, eller {first_round_investor_prc:.2f}%') 
+
+    # Calculate ownership over rounds
+    ownership = [100, 
+                 100 * (1-dilution/100), 
+                 100 * (1-dilution/100) * (1-dilution2/100), 
+                 100 * (1-dilution/100) * (1-dilution2/100) * (1-dilution3/100)]
+    rundas = ['Runda 1', 'Runda 2', 'Runda 3', 'Exit']
+
+    # Create the plot
+    fig1 = px.line(x=rundas, y=ownership, labels={'y':'Ägarandel (%)', 'x':'Rundor'}, title='Ägarandel Över Rundor')
+    st.plotly_chart(fig1) 
 
 
 with colB:
@@ -144,4 +160,28 @@ with colB:
     discount_factor = 1/n_years
     annualiserad_prc = ((likvid_exit/float_runda1) ** discount_factor - 1) *100 if float_runda1 != 0 else 0
     st.write(f'annualiserad avkastning är {annualiserad_prc:.2f}%')
+
+    # st.write(dilution)
+    # st.write(dilution2)
+    # st.write(dilution3)
+
+    dilution_1st = dilution/100
+    dilution_2nd_round= dilution_1st * ((100 - dilution2)/100)
+    dilution_final = dilution_2nd_round * ((100 - dilution3)/100)
+    # st.write(dilution_1st)
+    # st.write(dilution_2nd_round)
+    # st.write(dilution_final)
+    
+  
+    
+    # Calculate implied value over rounds and exit for an investor who only participated in the first round
+    implied_value = [float_runda1, 
+                     dilution_2nd_round * post_money2,  # After Runda 1 dilution
+                     dilution_final * post_money3,  # After Runda 1 & 2 dilution
+                     dilution_final * float_exit]  # Using final diluted ownership percentage
+
+    # Create the bar chart
+    fig2 = px.bar(x=rundas, y=implied_value, labels={'y':'Antydd Värde (msek)', 'x':'Rundor'}, title='Antydd Värde Över Rundor och Exit för Runda 1 Investerare')
+    st.plotly_chart(fig2)
+
 
