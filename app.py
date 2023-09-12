@@ -111,16 +111,11 @@ st.write("---")
 
 colA, colB = st.columns(2)
 
- # st.write(dilution)
-# st.write(dilution2)
-# st.write(dilution3)
-
+#some variables used later
 dilution_1st = dilution/100
 dilution_2nd_round= dilution_1st * ((100 - dilution2)/100)
 dilution_final = dilution_2nd_round * ((100 - dilution3)/100)
-# st.write(dilution_1st)
-# st.write(dilution_2nd_round)
-# st.write(dilution_final)
+
     
 
 with colA:
