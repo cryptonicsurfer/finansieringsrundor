@@ -144,8 +144,8 @@ with colA:
 
     # Calculate ownership over rounds
     ownership = [100 * dilution_1st,
-                 100 * dilution_1st, 
                  100 * dilution_2nd_round, 
+                 100 * dilution_final, 
                  100 * dilution_final]
     rundas = ['Runda 1', 'Runda 2', 'Runda 3', 'Exit']
 
