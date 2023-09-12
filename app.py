@@ -111,15 +111,27 @@ st.write("---")
 
 colA, colB = st.columns(2)
 
+ # st.write(dilution)
+# st.write(dilution2)
+# st.write(dilution3)
+
+dilution_1st = dilution/100
+dilution_2nd_round= dilution_1st * ((100 - dilution2)/100)
+dilution_final = dilution_2nd_round * ((100 - dilution3)/100)
+# st.write(dilution_1st)
+# st.write(dilution_2nd_round)
+# st.write(dilution_final)
+    
+
 with colA:
     # st.header('***' * 15)
     float_post_money3 = float_pre_money3 + float_runda3
 
     capital_raised= float_runda1 + float_runda2 + float_runda3
 
-    st.write(f'Bolaget behöver {capital_raised}msek i extern equity')
+    st.write(f'Bolaget behöver **{capital_raised}msek** i extern equity')
     st.write('Om man bara deltagit i runda 1:')
-   
+    
     #variabler för olika beräkningar
     enbart_runda1 = dilution * ((100-dilution2)/100) * ((100-dilution3)/100)
     enbart_runda1_prc = enbart_runda1/100
@@ -128,22 +140,29 @@ with colA:
     first_round_investor_prc = (first_round_investor_x/ 1 - 1) * 100
     bolags_return_x = float_exit / float_pre_money if float_pre_money != 0 else 0
     
-    st.write(f'Likvid vid försäljning: {likvid_exit:.2f} msek')
-    st.write(f'Ägarandel från {dilution:.2f}% till {enbart_runda1:.2f}%')
+    st.write(f'Likvid vid försäljning: **{likvid_exit:.2f}** msek')
+    st.write(f'Ägarandel från **{dilution:.2f}%** till **{enbart_runda1:.2f}%**')
 
-    st.write(f'total utveckling {bolags_return_x:.2f}x')
+    st.write(f'total utveckling **{bolags_return_x:.2f}x**')
 
-    st.write(f'total utveckling om man bara deltagit i runda 1: {first_round_investor_x:.2f}x, eller {first_round_investor_prc:.2f}%') 
+    st.write(f'total utveckling om man bara deltagit i runda 1: **{first_round_investor_x:.2f}x**, eller **{first_round_investor_prc:.2f}%**') 
 
     # Calculate ownership over rounds
-    ownership = [100, 
-                 100 * (1-dilution/100), 
-                 100 * (1-dilution/100) * (1-dilution2/100), 
-                 100 * (1-dilution/100) * (1-dilution2/100) * (1-dilution3/100)]
+    ownership = [100 * dilution_1st,
+                 100 * dilution_1st, 
+                 100 * dilution_2nd_round, 
+                 100 * dilution_final]
     rundas = ['Runda 1', 'Runda 2', 'Runda 3', 'Exit']
 
     # Create the plot
-    fig1 = px.line(x=rundas, y=ownership, labels={'y':'Ägarandel (%)', 'x':'Rundor'}, title='Ägarandel Över Rundor')
+    fig1 = px.bar(x=rundas, 
+                  y=ownership, 
+                  labels={'y':'Ägarandel (%)', 'x':'Rundor'}, 
+                  title='Ägarandel Över Rundor',
+                  color=ownership,  # Color based on this variable
+                  color_continuous_scale='pinkyl',  # Using the Viridis color scale
+                  )
+
     st.plotly_chart(fig1) 
 
 
@@ -151,27 +170,16 @@ with colB:
     # st.header('***' * 15)
     n_years = st.slider('välj tidshorisont', min_value=1, max_value=12, value=7)
     st.markdown(f"""
-    Exitvärde: {float_exit}msek  
-    Ägande har gått från {dilution:.2f}% till {enbart_runda1:.2f}%,  
-    Investerat belopp från runda 1 är: {float_runda1}msek,  
-    Så likvid till runda 1 inveseterare vid exit är: {likvid_exit:.2f} msek
+    Exitvärde: **{float_exit}msek**  
+    Ägande har gått från {dilution:.2f}% till **{enbart_runda1:.2f}%**,  
+    Investerat belopp från runda 1 är: **{float_runda1}** msek,  
+    Så likvid till runda 1 investerare vid exit är: **{likvid_exit:.2f}** msek
     """)
     
     discount_factor = 1/n_years
     annualiserad_prc = ((likvid_exit/float_runda1) ** discount_factor - 1) *100 if float_runda1 != 0 else 0
     st.write(f'annualiserad avkastning är {annualiserad_prc:.2f}%')
 
-    # st.write(dilution)
-    # st.write(dilution2)
-    # st.write(dilution3)
-
-    dilution_1st = dilution/100
-    dilution_2nd_round= dilution_1st * ((100 - dilution2)/100)
-    dilution_final = dilution_2nd_round * ((100 - dilution3)/100)
-    # st.write(dilution_1st)
-    # st.write(dilution_2nd_round)
-    # st.write(dilution_final)
-    
   
     
     # Calculate implied value over rounds and exit for an investor who only participated in the first round
@@ -181,7 +189,12 @@ with colB:
                      dilution_final * float_exit]  # Using final diluted ownership percentage
 
     # Create the bar chart
-    fig2 = px.bar(x=rundas, y=implied_value, labels={'y':'Antydd Värde (msek)', 'x':'Rundor'}, title='Antydd Värde Över Rundor och Exit för Runda 1 Investerare')
+    fig2 = px.bar(x=rundas, 
+                  y=implied_value, 
+                  labels={'y':'Antydd Värde (msek)', 'x':'Rundor'}, 
+                  title='Antydd Värde Över Rundor och Exit för Runda 1 Investerare',
+                  color = implied_value,
+                  color_continuous_scale='pinkyl',)
     st.plotly_chart(fig2)
 
 
